@@ -1,1 +1,3 @@
 # mtgScrape
+The goal of this project is to gather data on Magic the Gathering sets and store the data in various manners. 
+What to do with the data is to come...
