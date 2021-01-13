@@ -16,7 +16,7 @@ def getCardName(html):
     cardNameStart = html.find('<h1 class="card-text-title" lang="en">') + 38
     cardNameEnd = html.find('<', cardNameStart)
     title = html[cardNameStart:cardNameEnd].replace("&#39;", "'").strip()
-    cardNameTwo = html.find('<h1 class="card-text-title" lang="en">', cardNameEnd+1)
+    cardNameTwo = html.find('<h1 class="card-text-title" lang="en">', cardNameEnd + 1)
     if cardNameTwo != -1 and html.count("card-text-mana-cost") == 1:
         cardNameTwoEnd = html.find('<br>', cardNameTwo)
         cardNameTwo = html[cardNameTwo + 38: cardNameTwoEnd].replace("&#39;", "'").strip()
@@ -50,7 +50,7 @@ def getCardCmc(html):
     if isDual(html):
         cardCmcBoxStart = html.find("card-text-mana-cost", cardCmcEndTwo)
         cardCmcBoxEnd = html.find("<br>", cardCmcBoxStart)
-        finalIndex = html.find("<em>",cardCmcBoxStart)
+        finalIndex = html.find("<em>", cardCmcBoxStart)
         cmcTwo = ""
         while cardCmcBoxStart < cardCmcBoxEnd:
             cardCmcEnd = html.find("</abbr>", cardCmcBoxStart, finalIndex)
@@ -78,7 +78,8 @@ def getCardText(html):
     cardNameStart = html.find('"card-text-oracle">') + 39
     cardNameEnd = html.find('</div>', cardNameStart)
     cardText = html[cardNameStart:cardNameEnd]
-    return cardText.replace("</p>", "").replace("<p>", "").strip()  # strip function removes leading and ending whitespaces
+    return cardText.replace("</p>", "").replace("<p>",
+                                                "").strip()  # strip function removes leading and ending whitespaces
 
 
 def isCreature(html):
@@ -111,8 +112,9 @@ def getSet(html):
 def getSetDetails(html):
     cardNameStart = html.find('prints-current-set-details">') + 30
     cardNameEnd = html.find('</span>', cardNameStart)
-    setDetails = html[cardNameStart:cardNameEnd]
-    return setDetails.strip()  # strip function removes leading and ending whitespaces
+    setDetails = html[cardNameStart:cardNameEnd].strip()
+    x = setDetails.split("·", 3)
+    return x  # strip function removes leading and ending whitespaces
 
 
 # change function to return a array of the form [set number, rarity, language]
@@ -120,12 +122,12 @@ def getSetDetails(html):
 def getCardImage(html):
     imageStart = html.find('src="https://c1.scryfall.com/file/scryfall-cards') + 5
     imageEnd = html.find('</div>', imageStart)
-    imageLink = html[imageStart:imageEnd].replace('" />', "").replace("\n","").strip()
+    imageLink = html[imageStart:imageEnd].replace('" />', "").replace("\n", "").strip()
     imageTwo = html.find('"card-image-back"')
     if imageTwo != -1:
         imageTwoStart = html.find('src="https://c1.scryfall.com/file/scryfall-cards', imageTwo) + 5
         imageTwoEnd = html.find("</div>", imageTwoStart)
-        imageTwo = html[imageTwoStart:imageTwoEnd].replace('" />', "").replace("\n","").strip()
+        imageTwo = html[imageTwoStart:imageTwoEnd].replace('" />', "").replace("\n", "").strip()
         imageLink = [imageLink.strip(), imageTwo.strip()]
     return imageLink
 
@@ -147,11 +149,15 @@ def append_list_as_row(file_name, list_of_elem):
 
 
 def main():
-    for i in range(1,392):
+    for i in range(1, 392):
         html = getWebPage("https://scryfall.com/card/znr/" + str(i))
-        cardDetails = [getCardName(html),getCardCmc(html),
-            getCardType(html),getPowTou(html),getSet(html),getSetDetails(html)
-            ,getCardImage(html)]
+        setNum = getSetDetails(html)[0]
+        setRarity = getSetDetails(html)[1]
+        lang = getSetDetails(html)[2]
+
+        cardDetails = [getCardName(html), getCardCmc(html),
+                       getCardType(html), getPowTou(html), getSet(html), setNum, setRarity, lang
+            , getCardImage(html)]
         append_list_as_row('setData.csv', cardDetails)
         print(cardDetails)
 
