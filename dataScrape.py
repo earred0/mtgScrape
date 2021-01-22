@@ -7,9 +7,8 @@ mpl.rcParams['font.size'] = 7.0
 dataOne = pd.read_csv("historyOfSet.csv")
 sets = dataOne.set.unique()
 
-fig, axes = plt.subplots(nrows=9, ncols=3)
+fig, axes = plt.subplots(nrows=7, ncols=4)
 
-data = pd.read_csv("historyOfSet.csv")
 sets = dataOne.set.unique()
 rarityNames = ["Common", "Uncommon", "Rare", "Mythic Rare"]
 
