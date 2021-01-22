@@ -1,8 +1,7 @@
-import re
+import urllib
 from urllib.request import urlopen
-import csv
 from csv import writer
-from bs4 import BeautifulSoup
+import pandas as pd
 
 
 def getWebPage(url):
@@ -70,8 +69,9 @@ def getCardCmc(html):
 def getCardType(html):
     cardNameStart = html.find('"card-text-type-line" lang="en">') + 32
     cardNameEnd = html.find('<div class="card-text-box"') - 15
-    cardType = html[cardNameStart:cardNameEnd]
-    return cardType.strip()  # strip function removes leading and ending whitespaces
+    cardType = html[cardNameStart:cardNameEnd].strip()
+    x = cardType.split("—", 2)
+    return x  # strip function removes leading and ending whitespaces
 
 
 def getCardText(html):
@@ -86,7 +86,7 @@ def isCreature(html):
     cardNameStart = html.find('"card-text-type-line" lang="en">') + 32
     cardNameEnd = html.find('<div class="card-text-box"') - 15
     cardType = html[cardNameStart:cardNameEnd]
-    if cardType.strip().find("Creature") != -1:
+    if cardType.strip().find("Creature") != -1 or cardType.strip().find("Legendary Creature") != -1:
         return True
     else:
         return False
@@ -149,17 +149,31 @@ def append_list_as_row(file_name, list_of_elem):
 
 
 def main():
-    for i in range(1, 392):
-        html = getWebPage("https://scryfall.com/card/znr/" + str(i))
-        setNum = getSetDetails(html)[0]
-        setRarity = getSetDetails(html)[1]
-        lang = getSetDetails(html)[2]
-
-        cardDetails = [getCardName(html), getCardCmc(html),
-                       getCardType(html), getPowTou(html), getSet(html), setNum, setRarity, lang
-            , getCardImage(html)]
-        append_list_as_row('setData.csv', cardDetails)
-        print(cardDetails)
+    setCsv = pd.read_csv("setInfo.csv")
+    setCodes = list(setCsv.expansionCode)
+    setSize = list(setCsv.numberOfCards)
+    tracker = 0
+    for code in setCodes:
+        for j in range(1, setSize[tracker] + 1):
+            if tracker == len(setCodes):
+                break
+            try:
+                html = getWebPage("https://scryfall.com/card/" + code.lower() + "/" + str(j))
+            except urllib.error.HTTPError:
+                html = getWebPage("https://scryfall.com/card/" + code.lower() + "/" + str(j) + "a")
+            setNum = getSetDetails(html)[0]
+            setRarity = getSetDetails(html)[1]
+            lang = getSetDetails(html)[2]
+            if isCreature(html):
+                creatureType = getCardType(html)[1]
+            else:
+                creatureType = None
+            cardDetails = [getCardName(html), getCardCmc(html),
+                        getCardType(html)[0], creatureType, getPowTou(html), getSet(html), setNum, setRarity, lang
+                , getCardImage(html)]
+            append_list_as_row('historyOfSet.csv', cardDetails)
+            print(cardDetails)
+        tracker += 1
 
 
 main()
