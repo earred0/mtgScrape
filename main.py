@@ -154,7 +154,7 @@ def main():
     setSize = list(setCsv.numberOfCards)
     tracker = 0
     for code in setCodes:
-        for j in range(1, setSize[tracker] + 1):
+        for j in range(1, int(setSize[tracker]) + 1):
             if tracker == len(setCodes):
                 break
             try:
