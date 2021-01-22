@@ -1,6 +1,6 @@
 # mtgScrape
-The goal of this project is to gather data on Magic the Gathering sets and store the data in various manners. 
-What to do with the data is to come...
+In an attempt to learn how to webscrape, I scraped all of the standard legal cards created in the past 8 years and compiled them into a CSV. Originally I was going to use beautiful soup to decode Scryfall, but their code was presented in a very clean matter, it was not necessary. 
 
-main.py is the script. It is looking at the html document from scryfall and grabbing information from there. 
-setData.csv is the first attempt at organizing the data in the CSV format. Next goal is to store the data in a SQL server. 
+I then practiced manipulating the data using pandas and matplotlib. dataScrape.py consists of a script that plots the rarity distrbution on a single page in a simple and visually pleasing way. 
+
+The next goal is to import the CSV file into a mySQL server.
