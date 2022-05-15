@@ -15,4 +15,3 @@ setInfo.csv: Contains information such as set name, set code, and set number
 
 pricetest.csv: Contains the same information as setInfo but includes a current price. 
 
-Next goal is to use multi-threading to speed up the runtime.
